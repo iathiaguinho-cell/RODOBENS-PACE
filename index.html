@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@900&display=swap" rel="stylesheet">
     <style>
-        /* A custom style block for fine-tuning the UI and animations */
         html {
             background-color: #0c0a09; /* Stone 950 */
         }
@@ -25,7 +24,6 @@
         .metric-value {
             transition: color 0.5s ease, background-color 0.5s ease;
         }
-        /* Custom colors for pace feedback, providing better visual contrast */
         .bg-pace-ok { background-color: #10B981; } /* Emerald 500 */
         .text-pace-ok { color: #10B981; }
         .bg-pace-fast { background-color: #EF4444; } /* Red 500 */
@@ -35,21 +33,13 @@
         .bg-pace-standby { background-color: #4B5563; } /* Slate 600 */
         .text-pace-standby { color: #6B7280; } /* Slate 500 */
 
-        /* Animation for the tactical advice card */
         @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .tactic-card-animation {
             animation: slideInUp 0.6s ease-out forwards;
         }
-        /* Prevents the blue highlight on tap for buttons on mobile */
         button {
             -webkit-tap-highlight-color: transparent;
         }
@@ -57,70 +47,60 @@
 </head>
 <body class="text-gray-200 flex flex-col h-screen antialiased">
 
-    <!-- Main Application Container -->
     <div id="app-container" class="flex flex-col h-full p-4 max-w-md mx-auto w-full">
 
-        <!-- Header -->
         <header class="text-center pt-2">
-            <h1 class="text-3xl font-bold text-amber-400 display-font tracking-wider">thIAguinho Pace Pro</h1>
-            <p class="text-sm text-gray-500">Missão: Pódio Rodobens 10K</p>
+            <h1 class="text-2xl md:text-3xl font-bold text-amber-400 display-font tracking-wider">thIAguinho Pace Pro</h1>
+            <p class="text-xs md:text-sm text-gray-500">Missão: Pódio Rodobens 10K</p>
         </header>
 
-        <!-- Live Metrics Panel -->
-        <main class="flex flex-col items-center justify-center gap-4 flex-grow">
+        <main class="flex flex-col items-center justify-center gap-2 md:gap-4 flex-grow">
             
-            <!-- Primary Metric: Current Pace -->
             <div class="w-full text-center">
-                <p class="text-lg text-gray-400">RITMO ATUAL (/km)</p>
-                <div id="current-pace" class="metric-value text-8xl lg:text-9xl font-bold bg-pace-standby text-gray-800 rounded-lg py-2 transition-all duration-300">
+                <p class="text-base md:text-lg text-gray-400">RITMO ATUAL (/km)</p>
+                <div id="current-pace" class="metric-value text-7xl sm:text-8xl font-bold bg-pace-standby text-gray-800 rounded-lg py-2 transition-all duration-300">
                     --:--
                 </div>
-            </div>
-
-            <!-- Visual Pace Feedback -->
-            <div class="w-full text-center">
-                <p id="pace-status-text" class="text-xl font-bold text-pace-standby h-6 transition-colors duration-300">AGUARDANDO</p>
+                <p id="pace-status-text" class="text-lg md:text-xl font-bold text-pace-standby h-6 transition-colors duration-300 mt-1">AGUARDANDO</p>
             </div>
             
-            <!-- Tactical Intelligence Card -->
-            <div id="tactic-card" class="w-full bg-stone-800/50 p-4 rounded-lg border border-stone-700 mt-4">
+            <div id="tactic-card" class="w-full bg-stone-800/50 p-3 md:p-4 rounded-lg border border-stone-700">
                  <div class="text-center">
-                    <p class="text-base text-gray-400 font-bold tracking-widest">ESTRATÉGIA KM <span id="current-km-label" class="display-font">1</span></p>
+                    <p class="text-sm md:text-base text-gray-400 font-bold tracking-widest">ESTRATÉGIA KM <span id="current-km-label" class="display-font">1</span></p>
+                </div>
+                <div class="text-center mt-1">
+                    <p id="tactic-terrain" class="text-lg md:text-xl text-amber-400 font-bold"></p>
+                    <p id="tactic-instruction" class="text-sm md:text-base text-gray-200 mt-1"></p>
                 </div>
                 <div class="text-center mt-2">
-                    <p id="tactic-terrain" class="text-xl text-amber-400 font-bold"></p>
-                    <p id="tactic-instruction" class="text-base text-gray-200 mt-1"></p>
-                </div>
-                <div class="text-center mt-3">
-                    <p class="text-sm text-gray-500">META</p>
-                    <p id="target-pace" class="text-3xl font-bold text-white display-font"></p>
+                    <p class="text-xs text-gray-500">META DE RITMO</p>
+                    <p id="target-pace" class="text-2xl md:text-3xl font-bold text-white display-font"></p>
                 </div>
             </div>
         </main>
 
-        <!-- Secondary Metrics & Footer -->
         <footer class="w-full">
-            <div class="grid grid-cols-2 gap-4 w-full text-center mb-4">
+            <div class="grid grid-cols-2 gap-4 w-full text-center mb-3">
                 <div>
-                    <p class="text-md text-gray-400">TEMPO</p>
-                    <p id="elapsed-time" class="text-5xl display-font">00:00:00</p>
+                    <p class="text-sm md:text-md text-gray-400">TEMPO TOTAL</p>
+                    <p id="elapsed-time" class="text-4xl md:text-5xl display-font">00:00:00</p>
                 </div>
                 <div>
-                    <p class="text-md text-gray-400">DISTÂNCIA</p>
-                    <p id="distance" class="text-5xl display-font">0.00 <span class="text-2xl text-gray-500">km</span></p>
+                    <p class="text-sm md:text-md text-gray-400">DISTÂNCIA</p>
+                    <p id="distance" class="text-4xl md:text-5xl display-font">0.00 <span class="text-xl md:text-2xl text-gray-500">km</span></p>
                 </div>
             </div>
 
-            <p id="status" class="text-amber-400 h-6 mb-2 text-center">Aguardando início...</p>
+            <p id="status" class="text-amber-400 h-6 mb-2 text-center text-sm">Aguardando início...</p>
             
             <div id="controls" class="flex justify-center gap-4">
-                <button id="start-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition-transform transform active:scale-95">
+                <button id="start-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-xl shadow-lg transition-transform transform active:scale-95">
                     INICIAR
                 </button>
-                <button id="pause-btn" class="w-1/2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-4 px-6 rounded-lg text-xl shadow-lg hidden transition-transform transform active:scale-95">
+                <button id="pause-btn" class="w-1/2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg text-xl shadow-lg hidden transition-transform transform active:scale-95">
                     PAUSAR
                 </button>
-                <button id="stop-btn" class="w-1/2 bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-lg text-xl shadow-lg hidden transition-transform transform active:scale-95">
+                <button id="stop-btn" class="w-1/2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg text-xl shadow-lg hidden transition-transform transform active:scale-95">
                     PARAR
                 </button>
             </div>
@@ -129,32 +109,27 @@
 
     <script>
         // --- RACE INTELLIGENCE CORE ---
-        // This array now contains the complete race strategy, including pace, terrain, and tactical instructions.
         const racePlan = [
-            // Km 1
-            { minPace: 315, maxPace: 325, terrain: "Descida Favorável", tactic: "Controle a euforia. Use a gravidade, não a força. Economize.", physiologyTip: "Respire fundo, relaxe os ombros. Deixe o corpo aquecer." },
-            // Km 2
-            { minPace: 320, maxPace: 330, terrain: "Descida Suave", tactic: "Mantenha o controle. Encontre seu ritmo de cruzeiro. A prova começa depois.", physiologyTip: "Sincronize sua respiração com a cadência. 2 passos inspirando, 2 expirando." },
-            // Km 3
-            { minPace: 325, maxPace: 335, terrain: "Plano de Transição", tactic: "Firme o ritmo. O corpo deve se sentir confortável, mas ativo.", physiologyTip: "Faça uma checagem mental: postura ereta, braços a 90 graus." },
-            // Km 4
-            { minPace: 340, maxPace: 350, terrain: "Primeira Subida", tactic: "Não ataque, absorva. Encurte a passada e aumente a cadência.", physiologyTip: "Incline o corpo à frente, use os braços como alavancas." },
-            // Km 5
-            { minPace: 330, maxPace: 340, terrain: "Plano Pós-Subida", tactic: "Recupere o ritmo de cruzeiro. Respire fundo. Hidrate-se se possível.", physiologyTip: "Solte a tensão dos ombros acumulada na subida." },
-            // Km 6
-            { minPace: 310, maxPace: 320, terrain: "Descida Longa", tactic: "É hora de ganhar tempo. Solte o corpo e alongue a passada.", physiologyTip: "Aproveite para recuperar o fôlego. Deixe a gravidade trabalhar." },
-            // Km 7
-            { minPace: 310, maxPace: 320, terrain: "Final da Descida", tactic: "Mantenha a velocidade, mas comece a se preparar mentalmente para o final.", physiologyTip: "Evite frear com o calcanhar. Aterrisse com o meio do pé." },
-            // Km 8
-            { minPace: 335, maxPace: 345, terrain: "Início da Subida Final", tactic: "A grande batalha começa. Mantenha a calma e o esforço constante.", physiologyTip: "Foque no horizonte, não no chão. Mantenha a cabeça erguida." },
-            // Km 9
-            { minPace: 350, maxPace: 365, terrain: "Pico da Subida", tactic: "Este é o teste! Foque na força mental. Use os braços vigorosamente.", physiologyTip: "A dor é temporária. Sua resistência é maior. Lembre-se do treino de 17k." },
-            // Km 10
-            { minPace: 325, maxPace: 345, terrain: "Sprint para o Pódio", tactic: "O pior já passou. Use toda a energia economizada. Aumente a frequência!", physiologyTip: "Contraia o abdômen. Use o core para estabilizar e impulsionar." }
+            { minPace: 315, maxPace: 325, terrain: "Descida Favorável", tactic: "Controle a euforia. Use a gravidade, não a força." },
+            { minPace: 320, maxPace: 330, terrain: "Descida Suave", tactic: "Mantenha o controle. Encontre seu ritmo de cruzeiro." },
+            { minPace: 325, maxPace: 335, terrain: "Plano de Transição", tactic: "Firme o ritmo. O corpo deve se sentir confortável." },
+            { minPace: 340, maxPace: 350, terrain: "Primeira Subida", tactic: "Não ataque, absorva. Encurte a passada, aumente a cadência." },
+            { minPace: 330, maxPace: 340, terrain: "Plano Pós-Subida", tactic: "Recupere o ritmo de cruzeiro. Respire fundo." },
+            { minPace: 310, maxPace: 320, terrain: "Descida Longa", tactic: "É hora de ganhar tempo. Solte o corpo, alongue a passada." },
+            { minPace: 310, maxPace: 320, terrain: "Final da Descida", tactic: "Mantenha a velocidade, prepare a mente para o final." },
+            { minPace: 335, maxPace: 345, terrain: "Início da Subida Final", tactic: "A batalha começa. Mantenha a calma, esforço constante." },
+            { minPace: 350, maxPace: 365, terrain: "Pico da Subida", tactic: "Teste de força mental! Use os braços vigorosamente." },
+            { minPace: 325, maxPace: 345, terrain: "Sprint para o Pódio", tactic: "Use toda a energia economizada. Aumente a frequência!" }
         ];
+        
+        const coachingTips = {
+            general: ["Postura ereta, ombros relaxados.", "Respire fundo, oxigene o corpo.", "Mantenha os braços a 90 graus."],
+            uphill: ["Incline o corpo à frente.", "Foque no horizonte, não no chão.", "Use os braços como alavancas."],
+            downhill: ["Evite frear com o calcanhar.", "Aproveite para recuperar o fôlego.", "Deixe a gravidade trabalhar."]
+        };
 
         // --- UI ELEMENTS ---
-        const ui = {
+        const allUiElements = {
             currentPace: document.getElementById('current-pace'),
             targetPace: document.getElementById('target-pace'),
             currentKmLabel: document.getElementById('current-km-label'),
@@ -176,10 +151,12 @@
         let totalDistance = 0, currentKm = 0;
         let positions = [];
         let mainInterval = null;
-        let lastPhysiologyTipTime = 0;
+        let lastCoachMessageTime = 0;
 
-        // --- CORE LOGIC ---
         const synth = window.speechSynthesis;
+
+        // --- FUNCTIONS ---
+
         function speak(text, important = false) {
             if (synth.speaking && !important) return;
             if (important) synth.cancel();
@@ -205,7 +182,7 @@
 
         function haversineDistance(coords1, coords2) {
             const toRad = x => x * Math.PI / 180;
-            const R = 6371e3;
+            const R = 6371e3; // Radius of Earth in meters
             const dLat = toRad(coords2.latitude - coords1.latitude);
             const dLon = toRad(coords2.longitude - coords1.longitude);
             const lat1 = toRad(coords1.latitude);
@@ -215,12 +192,36 @@
             return R * c;
         }
 
-        function updateDisplay() {
-            ui.distance.innerHTML = `${(totalDistance / 1000).toFixed(2)} <span class="text-2xl text-gray-500">km</span>`;
-            const elapsedSeconds = (Date.now() - startTime - totalPausedTime) / 1000;
-            ui.elapsedTime.textContent = formatTime(elapsedSeconds);
+        function coachEngine(currentPaceSeconds) {
+            const now = Date.now();
+            if (now - lastCoachMessageTime < 30000 || !isFinite(currentPaceSeconds)) return; // Prevents spamming
 
-            // Pace calculation based on recent GPS data for stability
+            const plan = racePlan[Math.min(currentKm, racePlan.length - 1)];
+            let tip = null;
+
+            if (currentPaceSeconds < plan.minPace - 5) { // Significantly too fast
+                tip = "Ritmo muito forte. Lembre-se do plano, guarde energia para o final.";
+            } else if (currentPaceSeconds > plan.maxPace + 5) { // Significantly too slow
+                tip = "Vamos buscar o ritmo. Foque na cadência, passos curtos e rápidos.";
+            } else if (plan.terrain.includes("Subida")) {
+                tip = coachingTips.uphill[Math.floor(Math.random() * coachingTips.uphill.length)];
+            } else if (plan.terrain.includes("Descida")) {
+                 tip = coachingTips.downhill[Math.floor(Math.random() * coachingTips.downhill.length)];
+            } else {
+                tip = coachingTips.general[Math.floor(Math.random() * coachingTips.general.length)];
+            }
+            
+            if(tip) {
+                speak(tip);
+                lastCoachMessageTime = now;
+            }
+        }
+        
+        function updateDisplay() {
+            allUiElements.distance.innerHTML = `${(totalDistance / 1000).toFixed(2)} <span class="text-xl md:text-2xl text-gray-500">km</span>`;
+            const elapsedSeconds = (Date.now() - startTime - totalPausedTime) / 1000;
+            allUiElements.elapsedTime.textContent = formatTime(elapsedSeconds);
+
             const recentPositions = positions.slice(-15);
             if (recentPositions.length > 2) {
                 const firstPos = recentPositions[0];
@@ -230,23 +231,16 @@
                 
                 if (dist > 5 && timeDiff > 2) {
                     const currentPaceSeconds = (timeDiff / dist) * 1000;
-                    ui.currentPace.textContent = formatPace(currentPaceSeconds);
+                    allUiElements.currentPace.textContent = formatPace(currentPaceSeconds);
                     updatePaceFeedback(currentPaceSeconds);
+                    coachEngine(currentPaceSeconds);
                 }
             }
             
-            // Check for new kilometer and update strategy
             const newKm = Math.floor(totalDistance / 1000);
             if (newKm !== currentKm) {
                 currentKm = newKm;
-                updateStrategyUI(true); // 'true' forces animation and audio
-            }
-
-            // Give a periodic physiology tip every 90 seconds
-            if (Date.now() - lastPhysiologyTipTime > 90000) {
-                 const plan = racePlan[Math.min(currentKm, racePlan.length - 1)];
-                 speak(plan.physiologyTip);
-                 lastPhysiologyTipTime = Date.now();
+                updateStrategyUI(true);
             }
         }
         
@@ -254,15 +248,15 @@
             const kmIndex = Math.min(currentKm, racePlan.length - 1);
             const plan = racePlan[kmIndex];
 
-            ui.currentKmLabel.textContent = kmIndex + 1;
-            ui.tacticTerrain.textContent = plan.terrain.toUpperCase();
-            ui.tacticInstruction.textContent = plan.tactic;
-            ui.targetPace.textContent = `${formatPace(plan.minPace)} - ${formatPace(plan.maxPace)}`;
+            allUiElements.currentKmLabel.textContent = kmIndex + 1;
+            allUiElements.tacticTerrain.textContent = plan.terrain.toUpperCase();
+            allUiElements.tacticInstruction.textContent = plan.tactic;
+            allUiElements.targetPace.textContent = `${formatPace(plan.minPace)} - ${formatPace(plan.maxPace)}`;
 
             if (isNewKm) {
-                ui.tacticCard.classList.remove('tactic-card-animation');
-                void ui.tacticCard.offsetWidth; // Trigger reflow
-                ui.tacticCard.classList.add('tactic-card-animation');
+                allUiElements.tacticCard.classList.remove('tactic-card-animation');
+                void allUiElements.tacticCard.offsetWidth; // Trigger reflow
+                allUiElements.tacticCard.classList.add('tactic-card-animation');
                 speak(`Quilômetro ${kmIndex + 1}. ${plan.terrain}. Tática: ${plan.tactic}`, true);
             }
         }
@@ -280,17 +274,17 @@
                 statusText = 'NO ALVO'; bgColor = 'bg-pace-ok'; textColor = 'text-pace-ok';
             }
             
-            ui.currentPace.className = `metric-value text-8xl lg:text-9xl font-bold rounded-lg py-2 transition-all duration-300 ${bgColor} text-gray-900`;
-            ui.paceStatusText.textContent = statusText;
-            ui.paceStatusText.className = `text-xl font-bold h-6 transition-colors duration-300 ${textColor}`;
+            allUiElements.currentPace.className = `metric-value text-7xl sm:text-8xl font-bold rounded-lg py-2 transition-all duration-300 ${bgColor} text-gray-800`;
+            allUiElements.paceStatusText.textContent = statusText;
+            allUiElements.paceStatusText.className = `text-lg md:text-xl font-bold h-6 transition-colors duration-300 mt-1 ${textColor}`;
         }
         
         function handlePosition(position) {
             if (position.coords.accuracy > 20) {
-                 ui.status.textContent = 'GPS com baixa precisão...';
-                 return;
+                allUiElements.status.textContent = 'GPS com baixa precisão...';
+                return;
             }
-            ui.status.textContent = 'GPS OK. Correndo...';
+            allUiElements.status.textContent = 'GPS OK. Correndo...';
             if (positions.length > 0) {
                 totalDistance += haversineDistance(positions[positions.length - 1].coords, position.coords);
             }
@@ -298,14 +292,13 @@
         }
 
         function handleError(error) {
-            ui.status.textContent = `Erro no GPS: ${error.message}`;
+            allUiElements.status.textContent = `Erro no GPS: ${error.message}`;
             alert(`Erro no GPS: ${error.message}. Verifique as permissões de localização do navegador.`);
         }
-        
-        // --- EVENT HANDLERS ---
+
         function startRun() {
             navigator.geolocation.getCurrentPosition(
-                (pos) => { // Success
+                (pos) => {
                     if (state === 'paused') {
                         totalPausedTime += Date.now() - pausedTime;
                     } else {
@@ -314,20 +307,18 @@
                         positions = [];
                         updateStrategyUI(true);
                     }
-                    
                     state = 'running';
-                    ui.status.textContent = 'Obtendo sinal de GPS...';
-                    lastPhysiologyTipTime = Date.now();
+                    allUiElements.status.textContent = 'Obtendo sinal de GPS...';
+                    lastCoachMessageTime = Date.now();
                     const geoOptions = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
                     watchId = navigator.geolocation.watchPosition(handlePosition, handleError, geoOptions);
                     mainInterval = setInterval(updateDisplay, 1000);
-
-                    ui.startBtn.classList.add('hidden');
-                    ui.pauseBtn.classList.remove('hidden');
-                    ui.stopBtn.classList.remove('hidden');
+                    allUiElements.startBtn.classList.add('hidden');
+                    allUiElements.pauseBtn.classList.remove('hidden');
+                    allUiElements.stopBtn.classList.remove('hidden');
                 },
-                (err) => { // Error
-                     handleError(err);
+                (err) => {
+                    handleError(err);
                 }
             );
         }
@@ -335,65 +326,61 @@
         function pauseRun() {
             state = 'paused';
             pausedTime = Date.now();
-            if(watchId) navigator.geolocation.clearWatch(watchId);
-            if(mainInterval) clearInterval(mainInterval);
+            if (watchId) navigator.geolocation.clearWatch(watchId);
+            if (mainInterval) clearInterval(mainInterval);
             watchId = mainInterval = null;
-            
-            ui.status.textContent = 'Pausado.';
-            ui.pauseBtn.classList.add('hidden');
-            ui.startBtn.classList.remove('hidden');
-            ui.startBtn.textContent = 'RETOMAR';
+            allUiElements.status.textContent = 'Pausado.';
+            allUiElements.pauseBtn.classList.add('hidden');
+            allUiElements.startBtn.classList.remove('hidden');
+            allUiElements.startBtn.textContent = 'RETOMAR';
         }
 
         function stopRun() {
             if (!confirm('Tem certeza que deseja FINALIZAR a prova?')) return;
-            
             state = 'stopped';
             if (watchId) navigator.geolocation.clearWatch(watchId);
             if (mainInterval) clearInterval(mainInterval);
-            
             speak(`Prova finalizada. Excelente trabalho!`, true);
-
-            ui.startBtn.classList.remove('hidden');
-            ui.startBtn.textContent = 'INICIAR';
-            ui.pauseBtn.classList.add('hidden');
-            ui.stopBtn.classList.add('hidden');
+            allUiElements.startBtn.classList.remove('hidden');
+            allUiElements.startBtn.textContent = 'INICIAR';
+            allUiElements.pauseBtn.classList.add('hidden');
+            allUiElements.stopBtn.classList.add('hidden');
             resetUI();
         }
-        
-        function resetUI() {
-             ui.currentPace.textContent = '--:--';
-             ui.elapsedTime.textContent = '00:00:00';
-             ui.distance.innerHTML = '0.00 <span class="text-2xl text-gray-500">km</span>';
-             ui.status.textContent = 'Aguardando início...';
-             ui.paceStatusText.textContent = 'AGUARDANDO';
-             ui.currentPace.className = 'metric-value text-8xl lg:text-9xl font-bold rounded-lg py-2 transition-all duration-300 bg-pace-standby text-gray-800';
-             updateStrategyUI();
-        }
 
-        // --- INITIALIZATION ---
-        ui.startBtn.addEventListener('click', startRun);
-        ui.pauseBtn.addEventListener('click', pauseRun);
-        ui.stopBtn.addEventListener('click', stopRun);
+        function resetUI() {
+            allUiElements.currentPace.textContent = '--:--';
+            allUiElements.elapsedTime.textContent = '00:00:00';
+            allUiElements.distance.innerHTML = '0.00 <span class="text-xl md:text-2xl text-gray-500">km</span>';
+            allUiElements.status.textContent = 'Aguardando início...';
+            allUiElements.paceStatusText.textContent = 'AGUARDANDO';
+            allUiElements.currentPace.className = 'metric-value text-7xl sm:text-8xl font-bold rounded-lg py-2 transition-all duration-300 bg-pace-standby text-gray-800';
+            updateStrategyUI();
+        }
         
-        // Keep the screen awake
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                } catch (err) { /* ignore */ }
+            }
+        }
+        
+        // --- INITIALIZATION ---
+        allUiElements.startBtn.addEventListener('click', startRun);
+        allUiElements.pauseBtn.addEventListener('click', pauseRun);
+        allUiElements.stopBtn.addEventListener('click', stopRun);
+        
         let wakeLock = null;
-        const requestWakeLock = async () => {
-          if ('wakeLock' in navigator) {
-            try {
-              wakeLock = await navigator.wakeLock.request('screen');
-            } catch (err) { /* ignore */ }
-          }
-        };
         requestWakeLock();
         document.addEventListener('visibilitychange', () => {
-          if (wakeLock !== null && document.visibilityState === 'visible') {
-            requestWakeLock();
-          }
+            if (wakeLock !== null && document.visibilityState === 'visible') {
+                requestWakeLock();
+            }
         });
         
-        // Initialize the first strategy card
         updateStrategyUI();
     </script>
 </body>
 </html>
+
