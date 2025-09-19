@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="bg-gray-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>thIAguinho Pace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto Mono', monospace;
+            touch-action: manipulation;
+            background: linear-gradient(180deg, #111827 0%, #000000 100%);
+        }
+        .metric-value, .display-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .metric-value {
+            transition: color 0.5s ease, background-color 0.5s ease;
+        }
+        /* Cores de feedback de ritmo */
+        .bg-pace-ok { background-color: #10B981; } /* Verde Esmeralda */
+        .text-pace-ok { color: #10B981; }
+        .border-pace-ok { border-color: #10B981; }
+
+        .bg-pace-fast { background-color: #EF4444; } /* Vermelho */
+        .text-pace-fast { color: #EF4444; }
+        .border-pace-fast { border-color: #EF4444; }
+        
+        .bg-pace-slow { background-color: #3B82F6; } /* Azul */
+        .text-pace-slow { color: #3B82F6; }
+        .border-pace-slow { border-color: #3B82F6; }
+
+        .bg-pace-standby { background-color: #4B5563; } /* Cinza */
+        .text-pace-standby { color: #4B5563; }
+        .border-pace-standby { border-color: #4B5563; }
+    </style>
+</head>
+<body class="text-white flex flex-col h-screen justify-between p-4">
+
+    <!-- Cabeçalho -->
+    <header class="text-center">
+        <h1 class="text-3xl font-bold text-amber-400 display-font">thIAguinho Pace</h1>
+        <p class="text-sm text-gray-400">Corrida Rodobens 10K</p>
+    </header>
+
+    <!-- Painel de Métricas Principal -->
+    <main class="flex flex-col items-center justify-center gap-2 flex-grow">
+        
+        <!-- Ritmo Atual -->
+        <div class="w-full text-center">
+            <p class="text-lg text-gray-400">RITMO ATUAL (/km)</p>
+            <div id="current-pace" class="metric-value text-8xl font-bold bg-pace-standby text-gray-900 rounded-lg p-2">
+                --:--
+            </div>
+        </div>
+
+        <!-- Indicador Visual de Ritmo -->
+        <div class="w-full text-center mt-2">
+            <p id="pace-status-text" class="text-xl font-bold text-pace-standby h-6 mb-2 transition-colors duration-500">AGUARDANDO</p>
+            <div class="bg-gray-700 rounded-full h-3 w-full max-w-sm mx-auto overflow-hidden relative border-2 border-gray-600">
+                <div id="pace-indicator-bar" class="absolute h-full transition-all duration-500 rounded-full" style="width: 10%; left: 45%; background-color: #4B5563;"></div>
+                <div class="absolute w-full h-full flex justify-center items-center">
+                    <div class="w-1 h-full bg-white opacity-30"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Meta do KM -->
+        <div class="w-full text-center mt-4">
+            <p class="text-lg text-gray-400">META DO KM <span id="current-km-label" class="display-font">1</span></p>
+            <p id="target-pace" class="text-4xl font-bold text-white display-font">5:15 - 5:25</p>
+        </div>
+        
+        <!-- Métricas Secundárias -->
+        <div class="grid grid-cols-2 gap-4 w-full mt-6 text-center">
+            <div>
+                <p class="text-md text-gray-400">TEMPO</p>
+                <p id="elapsed-time" class="text-5xl display-font">00:00:00</p>
+            </div>
+            <div>
+                <p class="text-md text-gray-400">DISTÂNCIA</p>
+                <p id="distance" class="text-5xl display-font">0.00 <span class="text-2xl">km</span></p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Rodapé com Controles e Status -->
+    <footer class="text-center">
+        <p id="status" class="text-amber-400 h-6 mb-4">Aguardando início...</p>
+        <div id="controls" class="flex justify-center gap-4">
+            <button id="start-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg">
+                INICIAR
+            </button>
+            <button id="pause-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg hidden">
+                PAUSAR
+            </button>
+            <button id="stop-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg hidden">
+                PARAR
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // --- CONFIGURAÇÃO DA ESTRATÉGIA ---
+        const strategy = [
+            { minPace: 315, maxPace: 325 }, // Km 1: 5:15 - 5:25
+            { minPace: 320, maxPace: 330 }, // Km 2: 5:20 - 5:30
+            { minPace: 325, maxPace: 335 }, // Km 3: 5:25 - 5:35
+            { minPace: 340, maxPace: 350 }, // Km 4: 5:40 - 5:50
+            { minPace: 330, maxPace: 340 }, // Km 5: 5:30 - 5:40
+            { minPace: 310, maxPace: 320 }, // Km 6: 5:10 - 5:20
+            { minPace: 310, maxPace: 320 }, // Km 7: 5:10 - 5:20
+            { minPace: 335, maxPace: 345 }, // Km 8: 5:35 - 5:45
+            { minPace: 350, maxPace: 365 }, // Km 9: 5:50 - 6:05
+            { minPace: 325, maxPace: 345 }  // Km 10: 5:25 - 5:45
+        ];
+
+        // --- ELEMENTOS DA UI ---
+        const currentPaceEl = document.getElementById('current-pace');
+        const targetPaceEl = document.getElementById('target-pace');
+        const currentKmLabelEl = document.getElementById('current-km-label');
+        const elapsedTimeEl = document.getElementById('elapsed-time');
+        const distanceEl = document.getElementById('distance');
+        const statusEl = document.getElementById('status');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const paceStatusTextEl = document.getElementById('pace-status-text');
+        const paceIndicatorBarEl = document.getElementById('pace-indicator-bar');
+
+        // --- ESTADO DO APLICATIVO ---
+        let state = 'stopped';
+        let watchId = null;
+        let startTime = 0;
+        let pausedTime = 0;
+        let totalPausedTime = 0;
+        let totalDistance = 0;
+        let currentKm = 0;
+        let positions = [];
+        let mainInterval = null;
+        let lastPaceWarning = { type: 'none', time: 0 };
+        
+        const synth = window.speechSynthesis;
+
+        // --- FUNÇÕES PRINCIPAIS ---
+        function speak(text, important = false) {
+            if (synth.speaking && !important) {
+                return;
+            }
+            if (important) {
+                synth.cancel();
+            }
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'pt-BR';
+            utterance.rate = 1.2;
+            synth.speak(utterance);
+        }
+
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+            const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        function formatPace(secondsPerKm) {
+            if (!isFinite(secondsPerKm) || secondsPerKm <= 0) return '--:--';
+            const minutes = Math.floor(secondsPerKm / 60).toString();
+            const seconds = Math.floor(secondsPerKm % 60).toString().padStart(2, '0');
+            return `${minutes}:${seconds}`;
+        }
+
+        function haversineDistance(coords1, coords2) {
+            const toRad = x => x * Math.PI / 180;
+            const R = 6371e3;
+            const dLat = toRad(coords2.latitude - coords1.latitude);
+            const dLon = toRad(coords2.longitude - coords1.longitude);
+            const lat1 = toRad(coords1.latitude);
+            const lat2 = toRad(coords2.latitude);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+        
+        function updateDisplay() {
+            distanceEl.innerHTML = `${(totalDistance / 1000).toFixed(2)} <span class="text-2xl">km</span>`;
+            const elapsedSeconds = (Date.now() - startTime - totalPausedTime) / 1000;
+            elapsedTimeEl.textContent = formatTime(elapsedSeconds);
+
+            const recentPositions = positions.slice(-15);
+            if (recentPositions.length > 1) {
+                const firstPos = recentPositions[0];
+                const lastPos = recentPositions[recentPositions.length - 1];
+                const dist = haversineDistance(firstPos.coords, lastPos.coords);
+                const timeDiff = (lastPos.timestamp - firstPos.timestamp) / 1000;
+                
+                if (dist > 5 && timeDiff > 1) {
+                    const currentPaceSeconds = (timeDiff / dist) * 1000;
+                    currentPaceEl.textContent = formatPace(currentPaceSeconds);
+                    updatePaceFeedback(currentPaceSeconds);
+                }
+            }
+            
+            const newKm = Math.floor(totalDistance / 1000);
+            if (newKm !== currentKm && newKm < strategy.length) {
+                const lastKmTime = (positions[positions.length - 1].timestamp - startTime - totalPausedTime) / 1000;
+                const kmSplitPace = (lastKmTime - (positions.find(p => totalDistance - haversineDistance(p.coords, positions[positions.length - 1].coords) < 1000)?.timestamp - startTime - totalPausedTime || 0) / 1000);
+
+                currentKm = newKm;
+                updateStrategyUI();
+                const km_label = currentKm + 1;
+                const minPaceText = formatPace(strategy[currentKm].minPace);
+                const maxPaceText = formatPace(strategy[currentKm].maxPace);
+                speak(`Quilômetro ${km_label}. Meta: entre ${minPaceText} e ${maxPaceText}.`, true);
+            }
+        }
+        
+        function updateStrategyUI() {
+            const kmIndex = Math.min(currentKm, strategy.length - 1);
+            currentKmLabelEl.textContent = kmIndex + 1;
+            const target = strategy[kmIndex];
+            targetPaceEl.textContent = `${formatPace(target.minPace)} - ${formatPace(target.maxPace)}`;
+            if (currentKm >= strategy.length) {
+                targetPaceEl.textContent = 'FINALIZE FORTE!';
+            }
+        }
+        
+        function updatePaceFeedback(currentPaceSeconds) {
+            const kmIndex = Math.min(currentKm, strategy.length - 1);
+            const { minPace, maxPace } = strategy[kmIndex];
+            let paceStatus, bgColorClass, textColorClass;
+
+            if (currentPaceSeconds < minPace) {
+                paceStatus = 'CONTROLE O RITMO';
+                bgColorClass = 'bg-pace-fast';
+                textColorClass = 'text-pace-fast';
+            } else if (currentPaceSeconds > maxPace) {
+                paceStatus = 'ACELERE';
+                bgColorClass = 'bg-pace-slow';
+                textColorClass = 'text-pace-slow';
+            } else {
+                paceStatus = 'NO ALVO';
+                bgColorClass = 'bg-pace-ok';
+                textColorClass = 'text-pace-ok';
+            }
+             if (currentKm >= strategy.length) {
+                paceStatus = 'SPRINT FINAL!';
+                bgColorClass = 'bg-pace-ok';
+                textColorClass = 'text-pace-ok';
+            }
+
+            // Update UI
+            currentPaceEl.className = `metric-value text-8xl font-bold rounded-lg p-2 ${bgColorClass} text-gray-900`;
+            paceStatusTextEl.textContent = paceStatus;
+            paceStatusTextEl.className = `text-xl font-bold h-6 mb-2 transition-colors duration-500 ${textColorClass}`;
+            paceIndicatorBarEl.style.backgroundColor = document.querySelector(`.${bgColorClass}`).style.backgroundColor;
+
+            // Update Indicator Bar
+            const paceRange = maxPace - minPace;
+            const midPace = minPace + paceRange / 2;
+            const deviation = currentPaceSeconds - midPace;
+            // Mapeia a deviação para uma posição de -50% (rápido) a +50% (lento)
+            let position = (deviation / (paceRange * 1.5)) * 50;
+            position = Math.max(-45, Math.min(45, position)); // Limita a -45% e 45% para não sair da barra
+            paceIndicatorBarEl.style.left = `${45 + position}%`;
+
+            // Voice Feedback
+            const now = Date.now();
+            if (paceStatus !== 'NO ALVO' && (now - lastPaceWarning.time > 15000 || lastPaceWarning.type !== paceStatus)) {
+                speak(paceStatus === 'ACELERE' ? 'Acelere um pouco' : 'Controle o ritmo');
+                lastPaceWarning = { type: paceStatus, time: now };
+            }
+        }
+
+        function handlePosition(position) {
+            if (position.coords.accuracy > 20) {
+                 statusEl.textContent = 'GPS com baixa precisão...';
+                 return;
+            }
+            statusEl.textContent = 'GPS OK. Correndo...';
+            if (positions.length > 0) {
+                totalDistance += haversineDistance(positions[positions.length - 1].coords, position.coords);
+            }
+            positions.push(position);
+        }
+
+        function handleError(error) {
+            statusEl.textContent = `Erro no GPS: ${error.message}`;
+            alert(`Erro: ${error.message}. Verifique as permissões de localização.`);
+        }
+
+        function startRun() {
+            if (state === 'paused') {
+                totalPausedTime += Date.now() - pausedTime;
+            } else {
+                startTime = Date.now();
+                totalPausedTime = totalDistance = currentKm = 0;
+                positions = [];
+                updateStrategyUI();
+                speak('Iniciando prova. Quilômetro 1. Meta: entre 5 minutos e 15 e 5 minutos e 25.', true);
+            }
+            
+            state = 'running';
+            statusEl.textContent = 'Obtendo sinal de GPS...';
+            const geoOptions = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
+            watchId = navigator.geolocation.watchPosition(handlePosition, handleError, geoOptions);
+            mainInterval = setInterval(updateDisplay, 1000);
+
+            startBtn.classList.add('hidden');
+            pauseBtn.classList.remove('hidden');
+            stopBtn.classList.remove('hidden');
+        }
+
+        function pauseRun() {
+            state = 'paused';
+            pausedTime = Date.now();
+            navigator.geolocation.clearWatch(watchId);
+            clearInterval(mainInterval);
+            watchId = mainInterval = null;
+            statusEl.textContent = 'Pausado.';
+            currentPaceEl.className = 'metric-value text-8xl font-bold rounded-lg p-2 bg-pace-standby text-gray-900';
+            paceStatusTextEl.textContent = 'PAUSADO';
+            paceStatusTextEl.className = 'text-xl font-bold h-6 mb-2 transition-colors duration-500 text-pace-standby';
+
+            pauseBtn.classList.add('hidden');
+            startBtn.classList.remove('hidden');
+            startBtn.textContent = 'RETOMAR';
+        }
+
+        function stopRun() {
+            if (!confirm('Tem certeza que deseja PARAR a corrida?')) return;
+            
+            state = 'stopped';
+            navigator.geolocation.clearWatch(watchId);
+            clearInterval(mainInterval);
+            watchId = mainInterval = null;
+            
+            const totalSeconds = (Date.now() - startTime - totalPausedTime) / 1000;
+            const finalPace = formatPace(totalSeconds / (totalDistance / 1000));
+            const finalDistance = (totalDistance / 1000).toFixed(2);
+
+            statusEl.textContent = `Finalizado! Pace médio: ${finalPace}`;
+            speak(`Corrida finalizada. Distância total: ${finalDistance} quilômetros. Tempo total: ${elapsedTimeEl.textContent}. Pace médio: ${finalPace}. Excelente trabalho!`, true);
+
+            startBtn.classList.remove('hidden');
+            startBtn.textContent = 'INICIAR';
+            pauseBtn.classList.add('hidden');
+            stopBtn.classList.add('hidden');
+        }
+
+        startBtn.addEventListener('click', startRun);
+        pauseBtn.addEventListener('click', pauseRun);
+        stopBtn.addEventListener('click', stopRun);
+        
+        let wakeLock = null;
+        const requestWakeLock = async () => {
+          if ('wakeLock' in navigator) {
+            try {
+              wakeLock = await navigator.wakeLock.request('screen');
+            } catch (err) {
+              console.log(`${err.name}, ${err.message}`);
+            }
+          }
+        };
+        requestWakeLock();
+        document.addEventListener('visibilitychange', () => {
+          if (wakeLock !== null && document.visibilityState === 'visible') {
+            requestWakeLock();
+          }
+        });
+    </script>
+</body>
+</html>
